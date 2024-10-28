@@ -1,4 +1,4 @@
-# Tema 03
+# ȚurcanuV_tema03
 
 1.a
 
@@ -8,6 +8,7 @@ Antiorar. Comentand desenarea axei X, dispare linia din dreapta. Comentand desen
 
 Rezolvare:
 
+```csharp
 private void DrawAxes() {
 
 GL.Begin(PrimitiveType.Lines);
@@ -31,6 +32,7 @@ GL.Vertex3(0, 0, 0);
 GL.Vertex3(0, 0, XYZ_SIZE);
 
 GL.End();
+```
 
 2.
 
@@ -68,7 +70,6 @@ TriangleStrip conectează punctele specificate (minimum 3) pentru a forma o band
 
 1. Distingerea usoara a mai multor entitati
 2. Simularea efectelor de lumina si umbra
-3. 
 
 7.a
 
@@ -80,6 +81,7 @@ De exemplu creand un triunghi, si dandu-i punctelor sale diferite culori
 
 Rezolvare:
 
+```csharp
 private void DrawAxes() {
 
 //  Triangle with Gradient
@@ -101,6 +103,131 @@ GL.Vertex2(2, 2);
 GL.End();
 
 }
+```
+
+EX 8, 9
+
+```csharp
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+
+        GL.Viewport(0, 0, Width, Height);
+
+        double aspect_ratio = Width / (double)Height;
+
+        Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (float)aspect_ratio, 0.1f, 100f);
+        GL.MatrixMode(MatrixMode.Projection);
+        GL.LoadMatrix(ref perspective);
+
+        //Matrix4 lookat = Matrix4.LookAt(15, 15, 20, 0, 0, 0, 0, 1, 0);
+        //GL.MatrixMode(MatrixMode.Modelview);
+        //GL.LoadMatrix(ref lookat);
+    }
+
+    KeyboardState keyboard;
+    protected override void OnUpdateFrame(FrameEventArgs e)
+    {
+        base.OnUpdateFrame(e);
+
+        keyboard = Keyboard.GetState();
+        MouseState mouse = Mouse.GetState();
+        EYE_X = mouse.X ;
+        EYE_Y = mouse.Y ;
+        EYE_X /= 4;
+        EYE_Y /= 4;
+
+        if(keyboard.IsKeyDown(Key.A))
+        {
+            x += 1;
+        }
+        if (keyboard.IsKeyDown(Key.D))
+        {
+            x -= 1;
+        }
+        if (keyboard.IsKeyDown(Key.W))
+        {
+            z += 1;
+        }
+        if (keyboard.IsKeyDown(Key.S))
+        {
+            z -= 1;
+        }
+
+        if (keyboard.IsKeyDown(Key.ShiftLeft))
+        {
+            y -= 1;
+        }
+
+        if (keyboard.IsKeyDown(Key.Space))
+        {
+            y += 1;
+        }
+
+    }
+
+    int x = 0,  z = 0, y = 0;
+    protected override void OnRenderFrame(FrameEventArgs e)
+    {
+        base.OnRenderFrame(e);
+
+        // Transparency enabled
+        GL.Enable(EnableCap.Blend);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+        GL.Clear(ClearBufferMask.ColorBufferBit);
+        GL.Clear(ClearBufferMask.DepthBufferBit);
+
+        Matrix4 lookat = Matrix4.LookAt( 1 , 1, 10 , EYE_X, -EYE_Y, 0, 0, 1, 0);
+        GL.MatrixMode(MatrixMode.Modelview);
+        GL.LoadMatrix(ref lookat);
+        //GL.LoadIdentity();
+        
+
+        GL.Translate(x, -y, z);
+
+        // TriangelStrip with Gradient
+
+        GL.Begin(PrimitiveType.TriangleStrip);
+
+        if(keyboard.IsKeyDown(Key.R))
+        {
+            GL.Color3(Color.Blue);
+        }
+        else
+        {
+            GL.Color3(Color.Yellow);
+        }
+        GL.Vertex2(-2, -2);
+
+        // Transparency view
+        if (keyboard.IsKeyDown(Key.P))
+        {
+            GL.Color4(0.8,0.1, 0.5, 1);
+        }
+        else
+        {
+            GL.Color4(0.8, 0.1, 0.5, 0.1);
+        }
+        GL.Vertex2(2, -2);
+
+        if (keyboard.IsKeyDown(Key.T))
+        {
+            GL.Color4(0.1, 0.1, 0.1, 1);
+        }
+        else
+        {
+            GL.Color4(0.7, 0.1, 0.7, 0.6);
+        }
+        GL.Vertex2(2, 2);
+
+        GL.End();
+
+        SwapBuffers();
+    }
+
+}
+```
 
 Ex 10
 
